@@ -12,14 +12,32 @@ app.use(bodyParser.json())
 
 app.use('/', express.static(path.join(__dirname, '../public')))
 
-// your API calls
-
-// example API call
-app.get('/apod', async (req, res) => {
+//ANCHOR: API calls
+//NOTE: get mission manifest
+app.get('/mars/:rover', async(req, res) => {
+    const rover = req.params.rover;
     try {
-        let image = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}`)
+        let roverInfo = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}?api_key=${process.env.API_KEY}`)
             .then(res => res.json())
-        res.send({ image })
+            console.log({ roverInfo })
+        res.send({ roverInfo });
+    } catch (err) {
+        console.log('error:', err);
+    }
+})
+
+
+//NOTE: Mars rover images by rover and by the sol date specified
+app.get('/mars/:rover/:dateType/:date', async (req, res) => {
+    const rover = req.params.rover;
+    const dateType = req.params.dateType === 'sol' ? 'sol' : 'earth_date';
+    const date = req.params.date;
+
+    try {
+        let marsImage = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?${dateType}=${date}&api_key=${process.env.API_KEY}`)
+            .then(res => res.json())
+            console.log({ marsImage })
+        res.send({ marsImage });
     } catch (err) {
         console.log('error:', err);
     }
