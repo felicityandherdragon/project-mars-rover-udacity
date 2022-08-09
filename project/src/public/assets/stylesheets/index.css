@@ -7,13 +7,44 @@ body {
   min-height: 100vh;
 }
 
-header {
-  /* header styles */
+#site-header {
+  display: flex;
+  justify-content: center;
+}
+
+nav {
+  width: 90vw;
+  margin: 10px auto;
+}
+
+#rover-tabs {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 main {
   flex: 1;
   padding: 20px;
+}
+
+#rover-content {
+  border: 1px solid black;
+  display: grid;
+  grid-template-columns: [left] 2fr [middle] 1fr [right];
+  grid-template-areas:
+    "gallery info"
+  ;
+  gap: 10px;
+}
+
+#rover-gallery {
+  grid-area: gallery;
+}
+
+aside {
+  grid-area: info;
 }
 
 footer {
@@ -22,7 +53,14 @@ footer {
 
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
-  /* use mobile */
+  nav {
+    width: 50vw;
+  }
+
+  #rover-tabs {
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
 }
 
 /* -------------------  DESKTOP  -------------------- */
