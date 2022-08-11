@@ -32,9 +32,10 @@ main {
 #rover-content {
   border: 1px solid black;
   display: grid;
-  grid-template-columns: [left] 2fr [middle] 1fr [right];
+  grid-template-columns: 1fr 1fr;
   grid-template-areas:
-    "gallery info"
+    "info info"
+    "gallery gallery"
   ;
   gap: 10px;
 }
@@ -60,6 +61,13 @@ footer {
   #rover-tabs {
     flex-direction: row;
     justify-content: space-evenly;
+  }
+
+  #rover-content {
+    grid-template-columns: [left] 2fr [middle] 1fr [right];
+    grid-template-areas:
+    "gallery info"
+  ;
   }
 }
 
