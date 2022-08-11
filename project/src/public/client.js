@@ -2,7 +2,7 @@
 
 // ------------------ STORE AND STORE FUNCTIONS ------------------------
 let store = Immutable.Map({
-  user: { name: 'Student' },
+  user: Immutable.Map({ name: 'Student' }),
   rovers: Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
   latestSol: 3558,
   latestEarthDate: '2022-08-09',
@@ -19,8 +19,8 @@ let store = Immutable.Map({
   }),
 });
 
-const updateStore = (store, newState) => {
-  store = Object.assign(store, newState); //TODO: need to update
+const updateStore = (state, newState) => {
+  store = store.merge(state, newState); //TODO: need to update
   // render(root, store);
 };
 
@@ -59,7 +59,7 @@ const roverContentHTML = (state) => {
 };
 
 const roverAsideContentHTML = (state) => {
-  
+
 }
 
 // -------------------- FUNCTIONS REQUESTING DATA ----------------
