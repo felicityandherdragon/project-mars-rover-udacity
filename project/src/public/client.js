@@ -2,37 +2,27 @@
 
 // ------------------ STORE AND STORE FUNCTIONS ------------------------
 let store = Immutable.Map({
-  user: Immutable.Map({ name: 'Student' }),
   rovers: Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
-  latestSol: 3558,
-  latestEarthDate: '2022-08-09',
   currentRover: 'Curiosity',
-  currentRoverGallery: Immutable.List([]),
-  currentRoverManifest: Immutable.Map({
-    name: 'Curiosity',
-    landing_date: '2012-08-06',
-    launch_date: '2011-11-26',
-    status: 'active',
-    max_sol: 3558,
-    max_date: '2022-08-09',
-    total_photos: 589124,
-  }),
+  currentRoverGallery: null,
+  currentRoverManifest: null,
 });
 
 const updateStore = (state, newState) => {
-  store = store.merge(state, newState); //TODO: need to update
-  // render(root, store);
+  store = store.merge(state, newState);
+  render(root, store);
 };
 
 // ---------------------- COMPONENTS AND COMPONENT FUNC------------------------------
 
-function changeRover(event) {
-  console.log(event.target.textContent);
-  // store.set('currentRover', event.target.textContent);
+async function changeRover(event) {
+  console.log(event.target.textContent); //TODO: remove
   updateStore(store, {
     currentRover: event.target.textContent,
   });
-  console.log(store.get('currentRover')); //TODO: store does not seem to be updated
+  await fetchRoverManifest(store);
+  console.log(store.get('currentRover')); //TODO: remove
+  console.log(store.getIn(['currentRoverManifest', 'max_sol'])); //TODO: remove
 }
 
 const roverTabs = (state) => {
@@ -53,28 +43,41 @@ const roverTabs = (state) => {
 const roverContentHTML = (state) => {
   return `<div id="rover-content">
         <div id="rover-gallery">This is where the picture gallery would show</div>
-        <aside>This is where the rover manifest would show</aside>
+        <aside>
+          <ul>
+            <li>Rover name: ${state.getIn(['currentRoverManifest', 'name'])}</li>
+            <li>Landing date: ${state.getIn(['currentRoverManifest', 'landing_date'])}</li>
+            <li>Launch date: ${state.getIn(['currentRoverManifest', 'launch_date'])}</li>
+            <li>Max sol: ${state.getIn(['currentRoverManifest', 'max_sol'])}</li>
+            <li>Earth date: ${state.getIn(['currentRoverManifest', 'max_date'])}</li>
+          </ul>
+          <button>Pick a random date!</button>
+          <button>Show latest!</button>
+        </aside>
       </div>
   `;
 };
 
-const roverAsideContentHTML = (state) => {
+// const roverAsideContentHTML = (state) => {
 
-}
+// }
 
 // -------------------- FUNCTIONS REQUESTING DATA ----------------
-
-/**
- * @description
- * @param {}
- */
-const fetchRoverManifest = (state) => {
+const fetchRoverManifest = async (state) => {
   const currentRover = state.get('currentRover');
-  fetch(`/mars/${currentRover}`)
+
+  let currentManifest = await fetch(`/mars/${currentRover}`)
     .then((res) => res.json())
     .then((data) => {
+      //TODO: remove
       console.log(data.roverInfo.photo_manifest);
-    });
+      return {
+        currentRoverManifest: data.roverInfo.photo_manifest
+      }
+    })
+    .catch(err => console.err(err));
+
+  updateStore(store, currentManifest);
 };
 
 // -------------------- FUNCTIONS PROCESSING DATA ----------------
@@ -85,6 +88,7 @@ const root = document.getElementById('root');
 
 const render = async (root, state) => {
   root.innerHTML = App(state);
+  document.querySelector('nav').addEventListener('click', changeRover);
 };
 
 // create content
@@ -103,6 +107,4 @@ const App = (state) => {
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', (event) => {
   render(root, store);
-  document.querySelector('nav').addEventListener('click', changeRover);
-  console.log('test', fetchRoverManifest(store));
 });
