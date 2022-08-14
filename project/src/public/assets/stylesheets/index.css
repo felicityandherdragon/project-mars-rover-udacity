@@ -46,10 +46,21 @@ main {
 
 aside {
   grid-area: info;
+  display: flex;
+  flex-direction: column;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
 }
 
 footer {
   /* footer styles */
+}
+
+.hidden {
+  display: none;
 }
 
 /* -------------------  TABLET  --------------------- */
