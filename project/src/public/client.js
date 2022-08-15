@@ -56,7 +56,6 @@ const roverContentHTML = (state) => {
 };
 
 const roverAsideContentHTML = (state) => {
-
     return `
       <div class="home-placeholder ${state.get('currentRoverManifest') && 'hidden'}">
         <p>Please select rover to see info</p>
@@ -69,32 +68,28 @@ const roverAsideContentHTML = (state) => {
           <li>Max sol: ${state.getIn(['currentRoverManifest', 'max_sol'])}</li>
           <li>Earth date: ${state.getIn(['currentRoverManifest', 'max_date'])}</li>
         </ul>
-        <form>
-          <label for="random-or-latest">Would you like to see a random date, or the latest date?</label>
-
-          <select id="random-or-latest" name="random-or-latest" required>
-            <option value="">Please select</option>
-            <option value="random-date" class="date-button-cta" name="random-date">Pick a random date!</option>
-            <option value="latest" class="date-button-cta" name="latest">Show latest!</option>
-          </select>
-
-          <label for="date-type">Should we go by sol, or earth date?</label>
-
-          <select id="date-type" name="date-type">
-            <option value="">Please select</option>
-            <option value="sol" name="sol">Sol sounds cool</option>
-            <option value="date" name="date">Earth date please</option>
-          </select>
-        </form>
+        <div>
+          <h3>Would you like to see a random date, or the latest date?</h3>
+          <button value="random-date" class="date-button-cta" name="random-date">Pick a random date!</option>
+          <button value="latest" class="date-button-cta" name="latest">Show latest!</button>
+        </div>
       </div>
     `
 }
 
 const roverGalleryHTML = (state) => {
-  console.log('image', state.get('currentRoverGallery')?.toArray()[0].get('img_src'))
+  console.log('image', state.get('currentRoverGallery')?.toArray()[0])
   return `
     <p class="${state.get('currentRoverGallery') && 'hidden'}">This is where the picture gallery would show</p>
-    <img class="${!state.get('currentRoverGallery') ? 'hidden' : ''}" src="${state.get('currentRoverGallery')?.toArray()[0].get('img_src')}" />
+    <div class="gallery-body ${!state.get('currentRoverGallery') ? 'hidden' : ''}">
+      <button class="gallery-nav">
+        <i class="fa-solid fa-circle-arrow-left prev-image"></i>
+      </button>
+      <img src="${state.get('currentRoverGallery')?.toArray()[0]}" />
+      <button class="gallery-nav">
+        <i class="fa-solid fa-circle-arrow-right next-image"></i>
+      </button>
+    </div>
   `
 }
 
@@ -120,24 +115,33 @@ const fetchRoverImages = async ({rover, dateType = 'sol', date}) => {
   let roverImages = await fetch(`/mars/${rover}/${dateType}/${date}`)
     .then((res) => res.json())
     .then((data) => {
+      const processedImages = processImageData(data.marsImage.photos);
       return {
-        currentRoverGallery: data.marsImage.photos
+        currentRoverGallery: processedImages
       }
     })
     .catch(err => console.err(err));
 
   console.log(roverImages);
+
   updateStore(store, roverImages);
 };
 
 // -------------------- FUNCTIONS PROCESSING DATA ----------------
+const processImageData = (imageData) => {
+  const updatedImageData = imageData.map((each) => {
+    return each.img_src;
+  })
+  return updatedImageData;
+}
 
 //-------------------------- RENDERING AND EVENT HANDLERS ------------------------------
 const render = async (root, state) => {
   console.log('I am rendering!')
   root.innerHTML = App(state);
   document.querySelector('nav').addEventListener('click', changeRover);
-  document.querySelector('#random-or-latest').addEventListener('change', fetchImages);
+  document.querySelectorAll('.date-button-cta').forEach((each) => each.addEventListener('click', fetchImages));
+  document.querySelectorAll('.gallery-nav').forEach((each) => each.addEventListener('click', navigateGallery))
 };
 
 async function changeRover(event) {
@@ -178,11 +182,14 @@ const fetchImages = async (event) => {
     dateType: store.get('selectedDateType'),
     date: date
   })
-  console.log(store.get('currentRoverGallery').toArray());
+}
+
+const navigateGallery = (event) => {
+  console.log(event.target);
+  console.log(event.target.classList);
 }
 
 //-------------------------- WINDOW LOAD EVENT ------------------------------
-// listening for load event because page should load before any JS is called
 window.addEventListener('load', (event) => {
   render(root, store);
 });
