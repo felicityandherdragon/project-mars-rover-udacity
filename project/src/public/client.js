@@ -5,7 +5,8 @@ let store = Immutable.Map({
   selectedDateType: 'sol', //or date
   currentRoverGallery: null,
   currentRoverManifest: null,
-  dateRandom: false
+  dateRandom: false,
+  galleryIdx: 0
 });
 
 const updateStore = (state, newState) => {
@@ -78,16 +79,18 @@ const roverAsideContentHTML = (state) => {
 }
 
 const roverGalleryHTML = (state) => {
-  console.log('image', state.get('currentRoverGallery')?.toArray()[0])
+  const currIdx = store.get('galleryIdx');
+  console.log('image', state.get('currentRoverGallery')?.toArray()[currIdx])
+
   return `
     <p class="${state.get('currentRoverGallery') && 'hidden'}">This is where the picture gallery would show</p>
     <div class="gallery-body ${!state.get('currentRoverGallery') ? 'hidden' : ''}">
-      <button class="gallery-nav">
-        <i class="fa-solid fa-circle-arrow-left prev-image"></i>
+      <button class="prev-image">
+        <i class="fa-solid fa-circle-arrow-left"></i>
       </button>
-      <img src="${state.get('currentRoverGallery')?.toArray()[0]}" />
-      <button class="gallery-nav">
-        <i class="fa-solid fa-circle-arrow-right next-image"></i>
+      <img src="${state.get('currentRoverGallery')?.toArray()[currIdx]}" />
+      <button class="next-image">
+        <i class="fa-solid fa-circle-arrow-right"></i>
       </button>
     </div>
   `
@@ -137,11 +140,12 @@ const processImageData = (imageData) => {
 
 //-------------------------- RENDERING AND EVENT HANDLERS ------------------------------
 const render = async (root, state) => {
-  console.log('I am rendering!')
+  
   root.innerHTML = App(state);
   document.querySelector('nav').addEventListener('click', changeRover);
   document.querySelectorAll('.date-button-cta').forEach((each) => each.addEventListener('click', fetchImages));
-  document.querySelectorAll('.gallery-nav').forEach((each) => each.addEventListener('click', navigateGallery))
+  document.querySelector('.prev-image').addEventListener('click', prevImage);
+  document.querySelector('.next-image').addEventListener('click', nextImage);
 };
 
 async function changeRover(event) {
@@ -184,9 +188,28 @@ const fetchImages = async (event) => {
   })
 }
 
-const navigateGallery = (event) => {
-  console.log(event.target);
-  console.log(event.target.classList);
+const prevImage = (event) => {
+  const boundary = 0
+  if (store.get('galleryIdx') <= boundary) {
+    alert('you have reached the first image!')
+    return
+  } else {
+    updateStore(store, {
+      galleryIdx: store.get('galleryIdx')-1
+    })
+  }
+}
+
+const nextImage = (event) => {
+  const boundary = store.get('currentRoverGallery').toArray().length;
+  if (store.get('galleryIdx') >= boundary) {
+    alert('you have reached the lasts image!')
+    return
+  } else {
+    updateStore(store, {
+      galleryIdx: store.get('galleryIdx')+1
+    })
+  }
 }
 
 //-------------------------- WINDOW LOAD EVENT ------------------------------
