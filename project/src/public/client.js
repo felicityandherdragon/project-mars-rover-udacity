@@ -62,7 +62,7 @@ const roverAsideContentHTML = (state) => {
         <p>Please select rover to see info</p>
       </div>
       <div class="rover-aside ${!state.get('currentRoverManifest') ? 'hidden' : ''}">
-        <h3>Rover manifest</h3>
+        <h3><i class="fa-solid fa-hand-sparkles"></i><span> Rover manifest</span></h3>
         <ul>
           <li>Rover name: ${state.getIn(['currentRoverManifest', 'name'])}</li>
           <li>Landing date: ${state.getIn(['currentRoverManifest', 'landing_date'])}</li>
@@ -71,7 +71,7 @@ const roverAsideContentHTML = (state) => {
           <li>Earth date: ${state.getIn(['currentRoverManifest', 'max_date'])}</li>
         </ul>
         <div>
-          <h3>Would you like to see a random date, or the latest date?</h3>
+          <h3><i class="fa-solid fa-hand-sparkles"></i><span> Would you like to see a random date, or the latest date?</span></h3>
           <button value="random-date" class="date-button-cta" name="random-date">Pick a random date!</option>
           <button value="latest" class="date-button-cta" name="latest">Show latest!</button>
         </div>

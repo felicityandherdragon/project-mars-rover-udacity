@@ -217,6 +217,13 @@ main {
   max-width: 800px;
 }
 
+.gallery-body button {
+  background-color: transparent;
+  border: 0;
+  color: #f1ebe5;
+  font-size: 20px;
+}
+
 .gallery-nav {
   background: none;
   border: 0;
@@ -237,6 +244,17 @@ aside {
   box-shadow: 12.5px 5.6px 15.5px -5px #262638;
   align-items: center;
   padding: 10px;
+}
+
+.date-button-cta {
+  background-color: #3a3a59;
+  padding: 10px;
+  width: 100%;
+  border: 0;
+  margin: 5px;
+  color: #ece5da;
+  font-size: 15px;
+  border-radius: 3px;
 }
 
 form {
@@ -266,7 +284,7 @@ footer {
   #rover-tabs li {
     border: 1px solid white;
     border-radius: 5px;
-    width: 150px;
+    width: 180px;
   }
 
   #rover-content {
