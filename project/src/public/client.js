@@ -22,7 +22,7 @@ const App = (state) => {
   let { rovers } = state;
 
   return `
-        <header id="site-header">Mars Rovers</header>
+        <header id="site-header"><h1><span>Mars Rovers</span></h1></header>
         ${roverTabs(state)}
         ${roverContentHTML(state)}
         <footer></footer>
@@ -62,6 +62,7 @@ const roverAsideContentHTML = (state) => {
         <p>Please select rover to see info</p>
       </div>
       <div class="rover-aside ${!state.get('currentRoverManifest') ? 'hidden' : ''}">
+        <h3>Rover manifest</h3>
         <ul>
           <li>Rover name: ${state.getIn(['currentRoverManifest', 'name'])}</li>
           <li>Landing date: ${state.getIn(['currentRoverManifest', 'landing_date'])}</li>
@@ -140,7 +141,7 @@ const processImageData = (imageData) => {
 
 //-------------------------- RENDERING AND EVENT HANDLERS ------------------------------
 const render = async (root, state) => {
-  
+
   root.innerHTML = App(state);
   document.querySelector('nav').addEventListener('click', changeRover);
   document.querySelectorAll('.date-button-cta').forEach((each) => each.addEventListener('click', fetchImages));
