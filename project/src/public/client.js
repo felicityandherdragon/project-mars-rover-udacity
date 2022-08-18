@@ -78,7 +78,6 @@ const roverAsideContentHTML = (state) => {
 
 const roverGalleryHTML = (state) => {
   const currIdx = store.get('galleryIdx');
-  console.log('image', state.get('currentRoverGallery')?.toArray()[currIdx])
 
   return `
     <p class="${state.get('currentRoverGallery') && 'hidden'}">Pick a date to look at the pictures from that day.  <i class="fa-solid fa-hand-point-right"></i></p>
