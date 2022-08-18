@@ -4,13 +4,13 @@
 
 1. ```git clone https://github.com/felicityandherdragon/project-mars-rover-udacity.git```
 
-2. ```bun install```
+2. cd into project folder ```cd project``` and ```bun install```
 
 If you don’t have bun installed yet, run `curl https://bun.sh/install | bash` or visit https://bun.sh/ for more info.
 
 3. Get a NASA developer API key in order to access the API endpoints. Go here: https://api.nasa.gov/.
 
-4. cd into project folder ```cd project``` and run ```bun run start```
+4. run ```bun run start```
 
 5. Application would be running on `http:localhost:3000`.
 
