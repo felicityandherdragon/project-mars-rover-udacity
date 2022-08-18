@@ -1,4 +1,4 @@
-# Functional Programming with Javascript
+# Project Mars Rover
 
 ## Start the application
 
