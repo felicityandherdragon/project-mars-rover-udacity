@@ -232,7 +232,8 @@ main {
 
 .rover-aside ul {
   list-style: none;
-  padding: 0;
+  padding: 10px;
+  line-height: 1.5rem;
 }
 
 aside {

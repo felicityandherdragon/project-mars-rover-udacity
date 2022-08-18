@@ -2,7 +2,7 @@
 let store = Immutable.Map({
   rovers: Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
   currentRover: 'Curiosity',
-  selectedDateType: 'sol', //or date
+  selectedDateType: 'sol',
   currentRoverGallery: null,
   currentRoverManifest: null,
   dateRandom: false,
@@ -15,12 +15,9 @@ const updateStore = (state, newState) => {
 };
 
 // ---------------------- COMPONENTS AND COMPONENT FUNC------------------------------
-// add our markup to the page
 const root = document.getElementById('root');
 
 const App = (state) => {
-  let { rovers } = state;
-
   return `
         <header id="site-header"><h1><span>Mars Rovers</span></h1></header>
         ${roverTabs(state)}
@@ -63,7 +60,7 @@ const roverAsideContentHTML = (state) => {
       </div>
       <div class="rover-aside ${!state.get('currentRoverManifest') ? 'hidden' : ''}">
         <h3><i class="fa-solid fa-hand-sparkles"></i><span> Rover manifest</span></h3>
-        <ul>
+        <ul class="rover-aside-list">
           <li>Rover name: ${state.getIn(['currentRoverManifest', 'name'])}</li>
           <li>Landing date: ${state.getIn(['currentRoverManifest', 'landing_date'])}</li>
           <li>Launch date: ${state.getIn(['currentRoverManifest', 'launch_date'])}</li>
@@ -84,7 +81,7 @@ const roverGalleryHTML = (state) => {
   console.log('image', state.get('currentRoverGallery')?.toArray()[currIdx])
 
   return `
-    <p class="${state.get('currentRoverGallery') && 'hidden'}">This is where the picture gallery would show</p>
+    <p class="${state.get('currentRoverGallery') && 'hidden'}">Pick a date to look at the pictures from that day.  <i class="fa-solid fa-hand-point-right"></i></p>
     <div class="gallery-body ${!state.get('currentRoverGallery') ? 'hidden' : ''}">
       <button class="prev-image">
         <i class="fa-solid fa-circle-arrow-left"></i>
@@ -104,8 +101,6 @@ const fetchRoverManifest = async (state) => {
   let currentManifest = await fetch(`/mars/${currentRover}`)
     .then((res) => res.json())
     .then((data) => {
-      //TODO: remove
-      console.log(data.roverInfo.photo_manifest);
       return {
         currentRoverManifest: data.roverInfo.photo_manifest
       }
@@ -126,8 +121,6 @@ const fetchRoverImages = async ({rover, dateType = 'sol', date}) => {
     })
     .catch(err => console.err(err));
 
-  console.log(roverImages);
-
   updateStore(store, roverImages);
 };
 
@@ -141,7 +134,6 @@ const processImageData = (imageData) => {
 
 //-------------------------- RENDERING AND EVENT HANDLERS ------------------------------
 const render = async (root, state) => {
-
   root.innerHTML = App(state);
   document.querySelector('nav').addEventListener('click', changeRover);
   document.querySelectorAll('.date-button-cta').forEach((each) => each.addEventListener('click', fetchImages));
@@ -159,28 +151,23 @@ async function changeRover(event) {
 
 const fetchImages = async (event) => {
   const userSelection = event.target.value;
+  let date;
   switch (userSelection) {
     case 'latest':
       updateStore(store, {
         dateRandom: false
       })
+      date = store.getIn(['currentRoverManifest', `max_${store.get('selectedDateType')}`])
       break;
     case 'random-date':
       updateStore(store, {
         dateRandom: true
       })
+      date = Math.floor(Math.random() * store.getIn(['currentRoverManifest', 'max_sol']))
       break;
     default:
       break
   }
-
-  let date;
-  if (store.get('dateRandom') === true) {
-    date = Math.floor(Math.random() * store.getIn(['currentRoverManifest', 'max_sol']))
-  } else {
-    date = store.getIn(['currentRoverManifest', `max_${store.get('selectedDateType')}`])
-  }
-  console.log('date', date);
 
   await fetchRoverImages({
     rover: store.get('currentRover').toLowerCase(),
